@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+datasource db {
+  provider = "postgresql"
+  
+}
+model Committee {
+  id            BigInt         @id @default(autoincrement())
+  name          String
+  interviewees  Interviewee[]  @relation("FirstCommittee")
+  interviewees2 Interviewee[]  @relation("SecondCommittee")
+  oscMembers    OscMember[]
+  interviews    Interview[]
+}
+
+model Interviewee {
+  id                BigInt      @id @default(autoincrement())
+  email             String
+  university        String
+  name              String
+  seatId            BigInt
+  firstCommitteeId  BigInt
+  secondCommitteeId BigInt
+  faculty           String
+  phone             String
+  firstCommittee    Committee   @relation("FirstCommittee", fields: [firstCommitteeId], references: [id])
+  secondCommittee   Committee   @relation("SecondCommittee", fields: [secondCommitteeId], references: [id])
+  interviews        Interview[]
+}
+
+model OscMember {
+  id          BigInt              @id @default(autoincrement())
+  email       String
+  name        String
+  committeeId BigInt
+  seatId      BigInt
+  newColumn   BigInt?
+  phone       String
+  role        String
+  committee   Committee           @relation(fields: [committeeId], references: [id])
+  phones      OscMemberPhone[]
+  panelMember InterviewPanel[]
+  schedule    InterviewSchedule[]
+}
+
+model OscMemberPhone {
+  oscMemId  BigInt
+  phone     BigInt
+  oscMember OscMember @relation(fields: [oscMemId], references: [id])
+
+  @@id([oscMemId, phone])
+}
+
+model Recruitment {
+  id         BigInt      @id @default(autoincrement())
+  eventDay   BigInt
+  date       BigInt
+  interviews Interview[]
+}
+
+model Interview {
+  id            BigInt           @id @default(autoincrement())
+  intervieweeId BigInt
+  result        BigInt?
+  time          BigInt
+  committeeId   BigInt
+  date          BigInt
+  recruitmentId BigInt
+  notes         BigInt?
+  interviewee   Interviewee      @relation(fields: [intervieweeId], references: [id])
+  committee     Committee        @relation(fields: [committeeId], references: [id])
+  recruitment   Recruitment      @relation(fields: [recruitmentId], references: [id])
+  panel         InterviewPanel[]
+}
+
+model InterviewPanel {
+  oscMemberId BigInt
+  interviewId BigInt
+  oscMember   OscMember @relation(fields: [oscMemberId], references: [id])
+  interview   Interview @relation(fields: [interviewId], references: [id])
+
+  @@id([oscMemberId, interviewId])
+}
+
+model InterviewSchedule {
+  id            BigInt    @id @default(autoincrement())
+  day           BigInt
+  oscMemberId   BigInt
+  availableFrom BigInt
+  availableTo   BigInt
+  breakFrom     BigInt
+  breakTo       BigInt
+  attendence    Boolean
+  oscMember     OscMember @relation(fields: [oscMemberId], references: [id])
+}

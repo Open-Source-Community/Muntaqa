@@ -1,0 +1,12 @@
+import * as Prisma from './internal/prismaNamespaceBrowser.js';
+export { Prisma };
+export * as $Enums from './enums.js';
+export * from './enums.js';
+export type Committee = Prisma.CommitteeModel;
+export type Interviewee = Prisma.IntervieweeModel;
+export type OscMember = Prisma.OscMemberModel;
+export type OscMemberPhone = Prisma.OscMemberPhoneModel;
+export type Recruitment = Prisma.RecruitmentModel;
+export type Interview = Prisma.InterviewModel;
+export type InterviewPanel = Prisma.InterviewPanelModel;
+export type InterviewSchedule = Prisma.InterviewScheduleModel;
